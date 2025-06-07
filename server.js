@@ -89,7 +89,7 @@ const getSystemInstruction = () => {
         { text: `Start the conversation by introducing yourself and asking for permission to ask personal questions to ensure the best recommendation. You MUST start with: "I'm Tina. I help you to choose the right insurance policy. May I ask you a few personal questions to make sure I recommend the best policy for you?"` },
         { text: `Only proceed to ask more questions if the user agrees. If the user does not agree, politely end the conversation.` },
         { text: `Do NOT ask users for the answer directly, such as "what insurance product do you want". Instead, ask questions to uncover details that help identify which policy is better. For example, "do you need coverage for your own car or just 3rd party?" or "What type of vehicle do you drive?" or "How old is your vehicle?"` },
-        { text: `Your questions should not be hardcoded. Adapt your questions based on the user's previous answers. Aim to understand their vehicle type, age, usage, their primary concerns (e.g., protecting their own car, legal minimum, concerns about mechanical breakdowns, budget, risk tolerance), and financial capacity for repairs.` },
+        { text: `Your questions should not be hardcoded. Adapt your questions based on the user's previous answers. Aim to understand their vehicle type, age, usage, their primary concerns (e.g., protecting their own car, legal minimum, concerns about mechanical breakdowns, budget, risk tolerance), and financial capacity for repairs. Also, ask about their current location (e.g., city or region) to help with accurate pricing estimates and understanding local risks.` }, // Added instruction to ask about location
         { text: `Keep your questions concise and natural, like a human conversation.` },
         { text: `At the end, after gathering sufficient information, you MUST recommend one or more of the following insurance products, providing clear reasons for each recommendation, referencing the details you know about the policies. If a policy is not suitable due to business rules or other considerations (e.g., high cost, many exclusions, insufficient coverage), explain why.` },
         { text: `Available Products:` },
@@ -131,14 +131,6 @@ app.post('/chat', async (req, res) => {
                 responseMimeType: "text/plain", // Ensure response is plain text
             },
         });
-
-        // Prepare the chat history for the Gemini API call.
-        // The Gemini API requires chat history to alternate between 'user' and 'model' roles,
-        // and if not empty, must always start with a 'user' role.
-        let chatHistoryForGeminiAPI = currentSessionHistory.map(item => ({
-            role: item.role,
-            parts: [{ text: item.text }]
-        }));
 
         let aiStreamResponse;
 
